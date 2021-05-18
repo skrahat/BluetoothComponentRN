@@ -2,10 +2,10 @@ import React from 'react'
 import { StyleSheet, Text, View, Image, Button } from 'react-native'
 import MainPage from "./MainPage";
 import { createStackNavigator } from '@react-navigation/stack';
-function StartPage(navigation ) {
+function StartPage({ navigation }) {
 
     const handleClick  = () => {
-        return <MainPage/>
+        navigation.navigate('MainPage', { name: 'MainPage' })
     }
     
     return (
@@ -15,7 +15,9 @@ function StartPage(navigation ) {
                 source={require("./images/my01_icon.jpg")} />
             <Button
                 title="Enter"
-                onPress={() => navigation.push('MainPage')}
+                onPress={() => 
+                    handleClick()
+                }
                 >
             </Button>
             
@@ -30,6 +32,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
+        backgroundColor: '#fff'
     },
 })
 
