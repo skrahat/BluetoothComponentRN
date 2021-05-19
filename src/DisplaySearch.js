@@ -237,6 +237,7 @@ import React, {
       marginRight: 10,
       }}
       />
+      
       //returns UI and renders all items 
     return (
       <>
@@ -253,14 +254,8 @@ import React, {
             )}
             
             <View
-                style={{
-                  borderTopColor: "#1C1B2A",
-                  borderTopWidth: 2,
-                  borderBottomColor: "#1C1B2A",
-                  borderBottomWidth: 2,
-                }}>
-                  <Text style={{textAlign: 'center',color: '#fff', backgroundColor: '#9087D6',}}> Devices</Text>
-              
+                style={styles.topBar}>
+                  <Text style={styles.topBarText}> Devices</Text>
   
               </View> 
             <View style={styles.body}>
@@ -288,6 +283,17 @@ import React, {
   const styles = StyleSheet.create({
     scrollView: {
       backgroundColor: Colors.lighter,
+    },
+    topBar: {
+      borderTopColor: "#1C1B2A",
+      borderTopWidth: 2,
+      borderBottomColor: "#1C1B2A",
+      borderBottomWidth: 2,
+    },
+    topBarText: {
+      textAlign: 'center',
+      color: '#fff', 
+      backgroundColor: '#9087D6',
     },
     engine: {
       position: 'absolute',

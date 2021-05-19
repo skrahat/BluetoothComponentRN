@@ -46,7 +46,7 @@ function App()  {
         <Stack.Screen
           name="StartPage"
           component={StartPage}
-          options={{ title: 'Weclome' }}
+          options={{ title: '' }}
         />
         <Stack.Screen name="MainPage" component={MainPage} options={{ title: 'MainPage', headerStyle: {
                       backgroundColor: '#E8E7F6',

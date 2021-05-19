@@ -17,7 +17,7 @@ function StartPage({ navigation }) {
     return (
         <View style={styles.container}>
             <Image 
-                style={{width: 200, height: 100, }}
+                style={styles.imageStyle}
                 source={require("./images/my01_icon.jpg")} />
             <Button
                 title="continue"
@@ -33,6 +33,10 @@ function StartPage({ navigation }) {
 
 //styles
 const styles = StyleSheet.create({
+    imageStyle: {
+        width: 200, 
+        height: 100,
+    },
     container: {
         flex: 1,
         justifyContent: 'center',

@@ -110,7 +110,12 @@ import React, {
     // hook only runs initially(ONCE) and checks for for android version, followed by location permission
     useEffect(() => {
       BleManager.start({showAlert: false});
-  
+      bleManagerEmitter.addListener("BleManagerDidUpdateState", (args) => {
+        //console.log(args.state);
+        toggleState =args.state;
+        console.log("User accept");
+        //handleBluetoothStatus(args.state);
+      });
       if (Platform.OS === 'android' && Platform.Version >= 23) {
         PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
             if (result) {
