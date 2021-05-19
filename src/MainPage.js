@@ -1,4 +1,4 @@
-
+//importing all necessary libraries and pages
 import React, {
     useState,
     useEffect,
@@ -26,29 +26,61 @@ import React, {
     Colors,
   } from 'react-native/Libraries/NewAppScreen';
   
-  
-
-
   import BleManager from 'react-native-ble-manager';
   const BleManagerModule = NativeModules.BleManager;
   const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
   
-  const MainPage = ({navigation}) => {
+  // MainPage function starts upon navigation to this page 
+  function MainPage({navigation})  {
+
+    //declaring constant variables
+    const [isEnabled, setIsEnabled] = useState(false);
+    var toggleState;
     const [isScanning, setIsScanning] = useState(false);
     const peripherals = new Map();
     const [list, setList] = useState([]);
 
+    //method to check bluetooth status and redirect to search results
     const handleNavClick  = () => {
-      navigation.navigate('DisplaySearch', { name: 'DisplaySearch',searchState: true })
+      //checks current bluetooth status and asks for permission to connect
+      if(isEnabled ==false){
+        BleManager.enableBluetooth()
+          .then(() => {
+            // Success code
+            console.log("Success, the user confirm");
+            navigation.navigate('DisplaySearch', { name: 'DisplaySearch',searchState: true })
+            
+          })
+          .catch((error) => {
+            // Failure code
+            console.log("The user refuse to enable bluetooth");
+          });
+        }
+      
   }
+   //method to check bluetooth status and redirect to past connected devices
     const handleNav2Click  = () => {
-      navigation.navigate('DisplaySearch', { name: 'DisplaySearch' , searchState: false})
+      
+      //checks current bluetooth status and asks for permission to connect
+      if(isEnabled ==false){
+        BleManager.enableBluetooth()
+          .then(() => {
+            // Success code
+            console.log("Success, the user confirm");
+            navigation.navigate('DisplaySearch', { name: 'DisplaySearch' , searchState: false})
+            
+          })
+          .catch((error) => {
+            // Failure code
+            console.log("The user refuse to enable bluetooth");
+          });
+        }
+      
   }
   
     
-    const [isEnabled, setIsEnabled] = useState(false);
-    var toggleState;
-  
+    
+    //toggle switch which is used tp turn on bluetooth
     const toggleSwitch = () => {
       BleManager.checkState();
       setIsEnabled(previousState => !previousState);
@@ -68,17 +100,16 @@ import React, {
      
     }
   
-  
+    //method to toggle switch temp
     const handleBluetoothStatus = (value) => {
         toggleState =value;
         //toggleSwitchOnce();
     
     }
   
+    // hook only runs initially(ONCE) and checks for for android version, followed by location permission
     useEffect(() => {
       BleManager.start({showAlert: false});
-  
-    
   
       if (Platform.OS === 'android' && Platform.Version >= 23) {
         PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
@@ -103,8 +134,6 @@ import React, {
   
     
   
-    
-  
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -124,11 +153,7 @@ import React, {
           <ScrollView
             contentInsetAdjustmentBehavior="automatic"
             style={styles.scrollView}>
-            {global.HermesInternal == null ? null : (
-              <View style={styles.engine}>
-                <Text style={styles.footer}>Engine: Hermes</Text>
-              </View>
-            )}
+            
             <View style={styles.body}>
               <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <Text>Turn on Bluetooth</Text>
@@ -151,10 +176,6 @@ import React, {
                 onPress={() => handleNav2Click() } />          
               </View>
   
-              
-  
-              
-            
             </View> 
                         
           </ScrollView>
@@ -164,6 +185,7 @@ import React, {
     );
   };
   
+  // various styles used in rendering UI
   const styles = StyleSheet.create({
     scrollView: {
       backgroundColor: Colors.lighter,

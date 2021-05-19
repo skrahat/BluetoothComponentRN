@@ -38,10 +38,10 @@ const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const Stack = createStackNavigator();
 
-const App = () => {
+function App()  {
   return (
     <NavigationContainer>
-      {/* Rest of your app code */}
+      
       <Stack.Navigator>
         <Stack.Screen
           name="StartPage"

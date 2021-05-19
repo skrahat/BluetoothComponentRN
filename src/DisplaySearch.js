@@ -1,3 +1,4 @@
+//importing all necessary libraries and pages
 
 import React, {
     useState,
@@ -27,15 +28,21 @@ import React, {
   } from 'react-native/Libraries/NewAppScreen';
   
   import BleManager from 'react-native-ble-manager';
-  const BleManagerModule = NativeModules.BleManager;
-  const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
   
-  const DisplaySearch = ({ route, navigation }) => {
+  
+  // DisplaySearch function starts upon navigation to this page 
+  function DisplaySearch  ({ route, navigation }){
+    
+    const BleManagerModule = NativeModules.BleManager;
+    const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
     const [isScanning, setIsScanning] = useState(false);
     const peripherals = new Map();
     const [list, setList] = useState([]);
+    const [isEnabled, setIsEnabled] = useState(false);
+    var toggleState;
+    const { name, searchState } = route.params;
   
-  
+    // method used to scan nearby bluetooth devices for 10 seconds 
     const startScan = () => {
       if (!isScanning) {
         BleManager.scan([], 10, true).then((results) => {
@@ -46,12 +53,13 @@ import React, {
         });
       }    
     }
-  
+    // method used to stop scanning
     const handleStopScan = () => {
       console.log('Scan is stopped');
       setIsScanning(false);
     }
-  
+    
+    // method used to disconnect a device which is already connected 
     const handleDisconnectedPeripheral = (data) => {
       let peripheral = peripherals.get(data.peripheral);
       if (peripheral) {
@@ -65,7 +73,8 @@ import React, {
     const handleUpdateValueForCharacteristic = (data) => {
       console.log('Received data from ' + data.peripheral + ' characteristic ' + data.characteristic, data.value);
     }
-  
+
+    // method used to obtain array of connected devices
     const retrieveConnected = () => {
       BleManager.getConnectedPeripherals([]).then((results) => {
         if (results.length == 0) {
@@ -81,10 +90,12 @@ import React, {
       });
     }
   
+    // method used to handle devices which are detected. The RSSI signal value is then used to approximately calculate their destance
     const handleDiscoverPeripheral = (peripheral) => {
       console.log('Got ble peripheral', peripheral);
       if (!peripheral.name) {
-        peripheral.name = 'N/A';
+        peripheral.name = 'No name';
+        //calculating distance using formula obtained from stackoverflow, variables are yet to be further tested for accuracy
         var distance = Math.pow(10 , ((-62 - (peripheral.rssi))/(10 * 2)));
         peripheral.distance= distance.toFixed(2);
         if(distance<5){
@@ -97,6 +108,7 @@ import React, {
       setList(Array.from(peripherals.values()));
     }
   
+    // method used to connect a device after being discovered and added to connected devices list
     const connectDevice = (peripheral) => {
       if (peripheral){
         if (peripheral.connected){
@@ -110,6 +122,7 @@ import React, {
               setList(Array.from(peripherals.values()));
             }
             console.log('Connected to ' + peripheral.id);
+            // simple alert used to verify a device when successfully connected
             Alert.alert(
               "Connected to device",
               )
@@ -149,41 +162,9 @@ import React, {
       }
   
     }
-    
-    
-    const [isEnabled, setIsEnabled] = useState(false);
-    var toggleState;
   
-    const toggleSwitch = () => {
-      BleManager.checkState();
-      setIsEnabled(previousState => !previousState);
-      if(isEnabled ==false){
-        BleManager.enableBluetooth()
-          .then(() => {
-            // Success code
-            console.log("Success, the user confirm");
-            
-          })
-          .catch((error) => {
-            // Failure code
-            console.log("The user refuse to enable bluetooth");
-          });
-        }
-  
-     
-    }
-  
-  
-    const handleBluetoothStatus = (value) => {
-        toggleState =value;
-        //toggleSwitchOnce();
-    
-    }
-    
-
-    const { name, searchState } = route.params;
-
-    const display = () => {
+    //method used to check whether to show connected devices or new scanned devices
+    const displayDevices = () => {
         console.log(searchState);
         if (searchState){
             startScan();
@@ -192,8 +173,7 @@ import React, {
         }
     }
     
-
-  
+      // hook only runs initially(ONCE) and activates bleManagerEmitter listeners 
     useEffect(() => {
       BleManager.start({showAlert: false});
   
@@ -206,8 +186,8 @@ import React, {
         toggleState =args.state;
         //handleBluetoothStatus(args.state);
       });
-      
-      display();
+      //calls method to run method once initially and display requested data
+      displayDevices();
   
       if (Platform.OS === 'android' && Platform.Version >= 23) {
         PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
@@ -239,7 +219,7 @@ import React, {
       const color = item.connected ? '#C1FFCF' : '#E8E7F6';
       return (
         <TouchableHighlight onPress={() => connectDevice(item) }>
-          <View style={[styles.row, {backgroundColor: color}]}>
+          <View style={[styles.row, {backgroundColor: color, }]}>
             <Text style={{fontSize: 16, textAlign: 'center', color: '#693D3D', padding: 10, }}>Range: {item.range}</Text>
             <Text style={{fontSize: 12, textAlign: 'center', color: '#693D3D', padding: 10, }}>Distance: {item.distance}</Text>
             <Text style={{fontSize: 12, textAlign: 'center', color: '#333333', padding: 2}}>Name: {item.name}</Text>
@@ -249,9 +229,15 @@ import React, {
         </TouchableHighlight>
       );
     }
-  
-    
-  
+    //method used to seperate itims in flatlist
+    const ItemSeparator = () => <View style={{
+      height: 2,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      marginLeft: 10,
+      marginRight: 10,
+      }}
+      />
+      //returns UI and renders all items 
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -266,8 +252,6 @@ import React, {
               </View>
             )}
             
-           
-              
             <View
                 style={{
                   borderTopColor: "#1C1B2A",
@@ -292,9 +276,8 @@ import React, {
           </ScrollView>
           <FlatList
               data={list}
-              renderItem={({ item }) => renderItem(item) 
-              
-              }
+              renderItem={({ item }) => renderItem(item) }
+              ItemSeparatorComponent={ItemSeparator}
               keyExtractor={item => item.id}
             />              
         </SafeAreaView>

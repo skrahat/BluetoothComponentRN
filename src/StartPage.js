@@ -2,19 +2,25 @@ import React from 'react'
 import { StyleSheet, Text, View, Image, Button } from 'react-native'
 import MainPage from "./MainPage";
 import { createStackNavigator } from '@react-navigation/stack';
+
+//initial function which starts as the first display
 function StartPage({ navigation }) {
+    //timer which automatically navigates to main page after 3 seconds 
+    setTimeout(() => {
+        handleClick();
+        }, 3000);
 
     const handleClick  = () => {
         navigation.navigate('MainPage', { name: 'MainPage' })
     }
-    
+    //returns UI with my01 icon and button
     return (
         <View style={styles.container}>
             <Image 
                 style={{width: 200, height: 100, }}
                 source={require("./images/my01_icon.jpg")} />
             <Button
-                title="Enter"
+                title="continue"
                 onPress={() => 
                     handleClick()
                 }
@@ -25,8 +31,8 @@ function StartPage({ navigation }) {
     );
 }
 
+//styles
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
         justifyContent: 'center',
