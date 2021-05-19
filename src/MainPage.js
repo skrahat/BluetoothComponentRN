@@ -133,7 +133,7 @@ import React, {
     }, []);
   
     
-  
+    //renders all UI components of the mainpage
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -144,10 +144,9 @@ import React, {
               <Image 
               style={styles.stretch}
               source={require("./images/bluetooth_icon.png")} />
-  
-  
-              <Text style={{margin:10, fontSize: 30 , fontWeight: 'bold', color: '#ffff',}}>
-                BlueApp Component v1
+
+              <Text style={styles.barText}>
+                BlueApp Component v2
               </Text>
           </View>
           <ScrollView
@@ -155,7 +154,7 @@ import React, {
             style={styles.scrollView}>
             
             <View style={styles.body}>
-              <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <View style={styles.switchText}>
                 <Text>Turn on Bluetooth</Text>
                 <Switch
                   trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -164,7 +163,7 @@ import React, {
                   value={isEnabled}
                 />
               </View>
-              <View style={{margin: 20,flex: 1, flexDirection: 'row', justifyContent: 'space-evenly'}}>
+              <View style={styles.buttonLayout}>
                 <Button 
                   color="#8B88A3"
                   title={'Start Scaning'}
@@ -172,7 +171,7 @@ import React, {
                 />  
                 <Button 
                 color="#8B88A3" 
-                title="Connected Devices" 
+                title="Paired Devices" 
                 onPress={() => handleNav2Click() } />          
               </View>
   
@@ -192,6 +191,23 @@ import React, {
     },
     bar: {
       backgroundColor: "#9087D6", 
+      flexDirection: 'row', 
+      justifyContent: 'space-evenly'
+    },
+    barText: {
+      margin:10, 
+      fontSize: 30 , 
+      fontWeight: 'bold', 
+      color: '#ffff',
+    },
+    switchText: {
+      marginTop: 10, 
+      flexDirection: 'row', 
+      justifyContent: 'space-evenly'
+    },
+    buttonLayout: {
+      margin: 20,
+      flex: 1, 
       flexDirection: 'row', 
       justifyContent: 'space-evenly'
     },
